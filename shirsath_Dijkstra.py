@@ -231,3 +231,97 @@ def visualize(start,goal):
         cv2.circle(frame,(x,y),5,(0,0,255),-1)
         return frame
     obstacles = (0,255,0)
+    def triangle(frame, width, height, x_coord,y_coord, angle=0):
+            x_coord = x_coord
+            y_coord = (frame.shape[0]-1)-y_coord
+            x_3, y_3 = x_coord, y_coord - width/2
+            x_2, y_2 = x_coord, y_coord + width/2
+            x_1, y_1 = x_coord+height, y_coord
+            points = np.array([[x_1, y_1], [x_2, y_2], [x_3, y_3]], dtype=np.int32)
+            cv2.fillPoly(frame, [points], obstacles)
+            return frame
+
+    def poly_shape(frame,edges, length, x_axis, y_axis,shape):
+        x_axis = x_axis
+        y_axis = (frame.shape[0]-1)-y_axis
+        the_ta = 2*np.pi/edges
+        p = length*0.5/np.sin(the_ta/2)      
+        x = []
+        y = []
+        for j in range(edges):
+            x.append(x_axis + p*np.cos(the_ta*j + shape))
+            y.append(y_axis + p*np.sin(the_ta*j + shape))
+
+        points = np.array([[int(x[j]), int(y[j])] for j in range(edges)], dtype=np.int32)
+        cv2.fillPoly(frame, [points], obstacles)
+
+        return frame
+    def rectangle(frame, height,w,x_coord,y_coord):
+        x_coord = x_coord
+        y_coord = (frame.shape[0]-1)-y_coord
+        height = height/2
+        w = w/2
+        pt1 = (int(x_coord + w), int(y_coord - height)) 
+        pt2 = (int(x_coord - w), int(y_coord + height))
+
+        cv2.rectangle(frame,pt1,pt2,obstacles,-1)
+        return frame
+    
+    height = 600
+    width = 250
+    
+    surface = triangle(surface,200,50,460,125)
+    surface = rectangle(surface,100,50,125,50)
+    surface = poly_shape(surface,6,75,300,125,np.pi/2)
+    surface = rectangle(surface,100,50,125,200)
+    surface = np.zeros((width,height,3),np.uint8)
+
+    x,y = start
+    y_axis_invert = (surface.shape[0]-1)-y
+    if np.array_equal(surface[y_axis_invert, x], np.array([255, 0 , 0])):
+        raise ValueError("Co-ordinate for start cannot be in obstacle space")
+    
+    x,y = goal
+    y_axis_invert = (surface.shape[0]-1)-y
+    if np.array_equal(surface[y_axis_invert, x], np.array([255,0, 0])):
+        raise ValueError("Co-ordinate for goal cannot be in obstacle space")
+    
+    surface = start_init(surface,start)
+    surface = goal_init(surface,goal)
+
+    return surface
+if __name__=="__void__":
+
+    starting_time=time.time()
+    starting_time = time.time()
+    x, y = [int(x) for x in input("Start coordinates to be enterred with a space: ").split()] 
+    
+    if not (0 <= x < 600) or not (0 <= y < 250):
+        # raise ValueError("Start coordinates are not acceptable")
+        print("Start coordinates are not acceptable")
+
+    start = (x,y)
+
+    x, y = [int(x) for x in input("Start coordinates to be enterred with a space: ").split()] 
+    if not (0 <= x < 600) or not (0 <= y < 250):
+        print("Goal coordinates are not acceptable")
+    goal = (x,y)
+    surface = visualize(start,goal)
+    plot(surface,start,goal)
+
+    ending_time = time.time()
+    runtime = ending_time - starting_time
+    print("Time to complete: {:.4f} seconds".format(runtime),"\n\n")
+
+
+
+
+
+
+
+    
+
+    
+
+    
+    

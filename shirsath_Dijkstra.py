@@ -123,11 +123,46 @@ def plot(surface,start,goal_path):
 
 
     def visual(frame,x_ynode):
-        x,y = x_ynode
         r_circle = 5
+        x,y = x_ynode
         layer = np.zeros_like(frame)
-        cv2.circle(layer, (x, y), r_circle, (255,255,255), -1)
         mask_circle = cv2.bitwise_and(frame, layer)
+        cv2.circle(layer, (x, y), r_circle, (255,255,255), -1)
+        
         
         return mask_circle
         
+
+    def visualisation(surface, nodes):
+        parents_node = {}
+        for x_ynode, (cost, index, parent) in nodes.items():
+            if parent is not None:
+                if parent not in parents_node:
+                    parents_node[parent] = []
+                parents_node[parent].append(x_ynode)    
+        color = (0,0,255)                               
+        initial = 0
+        for parent, visited_nodes in parents_node.items():
+            surface_shape = surface.shape[0]-1
+            x_ycoo = np.array([(surface_shape-x_ynode[1], x_ynode[0]) for x_ynode in visited_nodes]).transpose()
+            surface[x_ycoo[0], x_ycoo[1], :] = color
+            initial += len(visited_nodes)
+            if initial % 100 == 0:
+                cv2.waitKey(1)
+
+    def pointer(surface,trace):
+        r_circle = 1
+        color = (0, 255, 255)
+        
+        for x_ynode in trace:
+            x,y = x_ynode
+            
+            cv2.circle(surface, (x,y), r_circle, color, 1) 
+            cv2.imshow("Map", surface)
+            cv2.waitKey(2)
+            cv2.circle(surface, (x,y), r_circle+1, (255,0,0), -1)
+            cv2.imshow("Map", surface)
+            cv2.waitKey(1)
+
+        cv2.waitKey(2000)
+        cv2.destroyAllWindows()

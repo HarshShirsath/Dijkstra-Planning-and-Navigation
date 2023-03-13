@@ -1,13 +1,11 @@
+import cv2
 import heapq as hq
 import numpy as np
-import cv2
 import time
-# import visualize as vis
 
-exp_color = (255, 0, 0)
-
-global index 
 index = 1
+
+####### DEFINING 8 ACTION SET ######## 
 def plot(surface,start,goal_path):
     nodes = {}
     nodes[start] = (0,0,None)
@@ -15,6 +13,9 @@ def plot(surface,start,goal_path):
     open_loop = []
     close_loop = set()
 
+    ######## DEFINING COST 
+    ######## X COORDINATES FOR EVERY MOVE
+    ######## Y COORDINATES FOR EVERY MOVE
     def north(surface, x_ynode, cost):
         x,y = x_ynode
         x = x
@@ -96,7 +97,7 @@ def plot(surface,start,goal_path):
         return (surface,None,None)
     
     
-    
+    ###### TO CHECK VISITED NODES ######
     def to_be_visited(surface,x_ynode):
         parent = x_ynode
         peak_cost = nodes[x_ynode][0]
@@ -121,7 +122,7 @@ def plot(surface,start,goal_path):
             if node_new == goal_path:
                 break 
 
-
+    ###### VISUALIZE THE NODE POSITIONING #####
     def visual(frame,x_ynode):
         x,y = x_ynode
         r_circle = 5
@@ -130,7 +131,7 @@ def plot(surface,start,goal_path):
         mask_circle = cv2.bitwise_and(frame, layer)
         
         return mask_circle
-    
+    ###### DEFINING POINTER AND TRACKING IT'S POSITION WHEN EXPLORED ######
     def pointer(surface,trace):
         r_circle = 1
         color = (0, 255, 255)
@@ -147,7 +148,7 @@ def plot(surface,start,goal_path):
 
         cv2.waitKey(2000)
         cv2.destroyAllWindows()
-
+    ######## CHECKING IF THE NODE WAS ALREADY EXPLORED OR NOT IN THE CLOSED SET #######
     def visualisation(surface, nodes):
         parents_node = {}
         for x_ynode, (cost, index, parent) in nodes.items():
@@ -158,6 +159,7 @@ def plot(surface,start,goal_path):
         color = (0,0,255)                               
         initial = 0
 
+       
         for parent, visited_nodes in parents_node.items():
             surface_shape = surface.shape[0]-1
             x_ycoo = np.array([(surface_shape-x_ynode[1], x_ynode[0]) for x_ynode in visited_nodes]).transpose()
@@ -166,7 +168,7 @@ def plot(surface,start,goal_path):
             if initial % 100 == 0:
                 cv2.waitKey(1)
 
-                
+     #######DIJKSTRA ALGORITHM #####         
     def tracking(nodes, start, goal_path):
         trace = []      
         x_ynode = goal_path      
@@ -189,12 +191,12 @@ def plot(surface,start,goal_path):
 
         close_loop.add(x_ynode)
         if x_ynode == goal_path:
-            # print("Goal Reached\n\n")
+            print("Goal Reached\n\n")
             visualisation(surface, nodes)
             trace = tracking(nodes,start,goal_path)
             # track_animate(surface,trace)
             pointer(surface,trace)
-            cv2.waitKey(400000)
+            cv2.waitKey(4000)
             cv2.destroyAllWindows()
             return nodes
 
@@ -202,7 +204,7 @@ def plot(surface,start,goal_path):
             continue
         to_be_visited(surface,x_ynode)
 
-
+######## SHOWING FRAMES WITH RESPECTIVE NODES EXPLORED AFTER FILTERING ########
     def show(frame):
         cv2.imshow('Surface',frame) 
 
@@ -220,21 +222,22 @@ def visualize(start,goal):
         x = x
         y = (frame.shape[0]-1)-y
         return (x,y)
-
+    
+    ####### STARTING GOAL NODE ####### 
     def start_init(frame,node):
         x,y = shift_origin(frame,node)
         cv2.circle(frame,(x,y),5,(0,0,255),-1)
         return frame
-
+    
+    ####### INITIATING GOAL NODE ####### 
     def goal_init(frame,node):
         x,y = shift_origin(frame,node)
         cv2.circle(frame,(x,y),5,(0,0,255),-1)
         return frame
     obstacles = (0,255,0)
-    ####changed
 
-    
-    
+
+    ####### TRIANGLE OBSTACLE #######
     def triangle(frame, width, height, x_coord,y_coord, angle=0):
         x_coord = x_coord
         y_coord = (frame.shape[0]-1)-y_coord
@@ -245,6 +248,7 @@ def visualize(start,goal):
         cv2.fillPoly(frame, [points], obstacles)
         return frame
 
+    ####### HEXAGON OBSTACLE #######
     def poly_shape(frame,edges, length, x_axis, y_axis,shape):
         x_axis = x_axis
         y_axis = (frame.shape[0]-1)-y_axis
@@ -260,6 +264,8 @@ def visualize(start,goal):
         cv2.fillPoly(frame, [points], obstacles)
 
         return frame
+    
+    ####### RECTANGLE OBSTACLE #######
     def rectangle(frame, height,w,x_coord,y_coord):
         x_coord = x_coord
         y_coord = (frame.shape[0]-1)-y_coord
@@ -271,6 +277,7 @@ def visualize(start,goal):
         cv2.rectangle(frame,pt1,pt2,obstacles,-1)
         return frame
     
+    ####### DEFINING PLANE SURFACE COORIDNATES ####### 
     height = 600
     width = 250
     surface = np.zeros((width,height,3),np.uint8)
@@ -294,6 +301,8 @@ def visualize(start,goal):
     surface = goal_init(surface,goal)
 
     return surface
+
+####### TAKING INPUTS AND PRINTING TIME TAKEN TO COMPETE DIJKSTRA ALGORITHM ####### 
 if __name__=="__main__":
 
     starting_time=time.time()
@@ -306,7 +315,7 @@ if __name__=="__main__":
 
     start = (x,y)
 
-    x, y = [int(x) for x in input("Start coordinates to be entered with a space: ").split()] 
+    x, y = [int(x) for x in input("Start coordinates to be enterred with a space: ").split()] 
     if not (0 <= x < 600) or not (0 <= y < 250):
         print("Goal coordinates are not acceptable")
     goal = (x,y)
@@ -314,6 +323,12 @@ if __name__=="__main__":
     surface = visualize(start,goal)
     plot(surface,start,goal)
 
+ #######PRINTING TIME TAKEN TO COMPLETE #####
     ending_time = time.time()
     timetorun = ending_time - starting_time
-    print("Time to run: {:.4f} seconds".format(timetorun),"\n\n")
+    print("Time to run: {:.4f} seconds".format(timetorun))
+
+
+
+
+

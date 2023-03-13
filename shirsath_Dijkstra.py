@@ -166,3 +166,68 @@ def plot(surface,start,goal_path):
 
         cv2.waitKey(2000)
         cv2.destroyAllWindows()
+
+    def tracking(nodes, start, goal_path):
+        trace = []      
+        x_ynode = goal_path      
+        while x_ynode != start:
+            trace.append(x_ynode)
+            parent = nodes[x_ynode][2]      
+            x_ynode = parent
+        trace.append(start)
+        trace.reverse() 
+        shift = surface.shape[0]-1
+        traced = [((x,shift-y)) for (x,y) in trace]
+        return traced
+    
+    hq.heappush(open_loop,(0,start))
+    
+    while open_loop:
+        cost, x_ynode = hq.heappop(open_loop)
+        if x_ynode in close_loop:
+            continue
+
+        close_loop.add(x_ynode)
+        if x_ynode == goal_path:
+            # print("Goal Reached\n\n")
+            visualisation(surface, nodes)
+            trace = tracking(nodes,start,goal_path)
+            # track_animate(surface,trace)
+            pointer(surface,trace)
+            cv2.waitKey(400000)
+            cv2.destroyAllWindows()
+            return nodes
+
+        if goal_path in open_loop:
+            continue
+        to_be_visited(surface,x_ynode)
+
+
+    def show(frame):
+        cv2.imshow('Surface',frame) 
+
+    def pop_color(frame,node,color):   
+
+        x,y = node
+        x = x
+        y = (frame.shape[0]-1)-y
+        color = np.array([255, 0, 0])      
+        frame[x][y] = color
+    
+def visualize(start,goal):
+    def shift_origin(frame,node):      
+        x,y = node
+        x = x
+        y = (frame.shape[0]-1)-y
+        return (x,y)
+
+    def start_init(frame,node):
+        x,y = shift_origin(frame,node)
+        cv2.circle(frame,(x,y),5,(0,0,255),-1)
+        return frame
+
+    def goal_init(frame,node):
+        x,y = shift_origin(frame,node)
+        cv2.circle(frame,(x,y),5,(0,0,255),-1)
+        return frame
+    obstacles = (0,255,0)

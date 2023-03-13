@@ -123,33 +123,14 @@ def plot(surface,start,goal_path):
 
 
     def visual(frame,x_ynode):
-        r_circle = 5
         x,y = x_ynode
+        r_circle = 5
         layer = np.zeros_like(frame)
-        mask_circle = cv2.bitwise_and(frame, layer)
         cv2.circle(layer, (x, y), r_circle, (255,255,255), -1)
-        
+        mask_circle = cv2.bitwise_and(frame, layer)
         
         return mask_circle
-        
-
-    def visualisation(surface, nodes):
-        parents_node = {}
-        for x_ynode, (cost, index, parent) in nodes.items():
-            if parent is not None:
-                if parent not in parents_node:
-                    parents_node[parent] = []
-                parents_node[parent].append(x_ynode)    
-        color = (0,0,255)                               
-        initial = 0
-        for parent, visited_nodes in parents_node.items():
-            surface_shape = surface.shape[0]-1
-            x_ycoo = np.array([(surface_shape-x_ynode[1], x_ynode[0]) for x_ynode in visited_nodes]).transpose()
-            surface[x_ycoo[0], x_ycoo[1], :] = color
-            initial += len(visited_nodes)
-            if initial % 100 == 0:
-                cv2.waitKey(1)
-
+    
     def pointer(surface,trace):
         r_circle = 1
         color = (0, 255, 255)
@@ -167,6 +148,25 @@ def plot(surface,start,goal_path):
         cv2.waitKey(2000)
         cv2.destroyAllWindows()
 
+    def visualisation(surface, nodes):
+        parents_node = {}
+        for x_ynode, (cost, index, parent) in nodes.items():
+            if parent is not None:
+                if parent not in parents_node:
+                    parents_node[parent] = []
+                parents_node[parent].append(x_ynode)    
+        color = (0,0,255)                               
+        initial = 0
+
+        for parent, visited_nodes in parents_node.items():
+            surface_shape = surface.shape[0]-1
+            x_ycoo = np.array([(surface_shape-x_ynode[1], x_ynode[0]) for x_ynode in visited_nodes]).transpose()
+            surface[x_ycoo[0], x_ycoo[1], :] = color
+            initial += len(visited_nodes)
+            if initial % 100 == 0:
+                cv2.waitKey(1)
+
+                
     def tracking(nodes, start, goal_path):
         trace = []      
         x_ynode = goal_path      
@@ -231,15 +231,19 @@ def visualize(start,goal):
         cv2.circle(frame,(x,y),5,(0,0,255),-1)
         return frame
     obstacles = (0,255,0)
+    ####changed
+
+    
+    
     def triangle(frame, width, height, x_coord,y_coord, angle=0):
-            x_coord = x_coord
-            y_coord = (frame.shape[0]-1)-y_coord
-            x_3, y_3 = x_coord, y_coord - width/2
-            x_2, y_2 = x_coord, y_coord + width/2
-            x_1, y_1 = x_coord+height, y_coord
-            points = np.array([[x_1, y_1], [x_2, y_2], [x_3, y_3]], dtype=np.int32)
-            cv2.fillPoly(frame, [points], obstacles)
-            return frame
+        x_coord = x_coord
+        y_coord = (frame.shape[0]-1)-y_coord
+        x_3, y_3 = x_coord, y_coord - width/2
+        x_2, y_2 = x_coord, y_coord + width/2
+        x_1, y_1 = x_coord+height, y_coord
+        points = np.array([[x_1, y_1], [x_2, y_2], [x_3, y_3]], dtype=np.int32)
+        cv2.fillPoly(frame, [points], obstacles)
+        return frame
 
     def poly_shape(frame,edges, length, x_axis, y_axis,shape):
         x_axis = x_axis
@@ -269,12 +273,12 @@ def visualize(start,goal):
     
     height = 600
     width = 250
-    
+    surface = np.zeros((width,height,3),np.uint8)
     surface = triangle(surface,200,50,460,125)
     surface = rectangle(surface,100,50,125,50)
     surface = poly_shape(surface,6,75,300,125,np.pi/2)
     surface = rectangle(surface,100,50,125,200)
-    surface = np.zeros((width,height,3),np.uint8)
+    
 
     x,y = start
     y_axis_invert = (surface.shape[0]-1)-y
@@ -290,7 +294,7 @@ def visualize(start,goal):
     surface = goal_init(surface,goal)
 
     return surface
-if __name__=="__void__":
+if __name__=="__main__":
 
     starting_time=time.time()
     starting_time = time.time()
@@ -302,26 +306,14 @@ if __name__=="__void__":
 
     start = (x,y)
 
-    x, y = [int(x) for x in input("Start coordinates to be enterred with a space: ").split()] 
+    x, y = [int(x) for x in input("Start coordinates to be entered with a space: ").split()] 
     if not (0 <= x < 600) or not (0 <= y < 250):
         print("Goal coordinates are not acceptable")
     goal = (x,y)
+
     surface = visualize(start,goal)
     plot(surface,start,goal)
 
     ending_time = time.time()
-    runtime = ending_time - starting_time
-    print("Time to complete: {:.4f} seconds".format(runtime),"\n\n")
-
-
-
-
-
-
-
-    
-
-    
-
-    
-    
+    timetorun = ending_time - starting_time
+    print("Time to run: {:.4f} seconds".format(timetorun),"\n\n")

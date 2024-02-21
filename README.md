@@ -1,10 +1,9 @@
 
 =======
 # Dijkstra_Algorithm
->>>>>>> 219277287dbfea94efdbccfc10b18c2eb08b91a1
-ENPM_661 PLANNING
-PROJECT 2: DIJKSTRA ALGORITHM FOR POINT ROBOT
-HARSHAL SHIRSATH, 119247419
+
+DIJKSTRA ALGORITHM FOR POINT ROBOT
+HARSHAL SHIRSATH
 shirsath@umd.edu
 
 LIBRARIES USED:
@@ -23,7 +22,7 @@ LINK TO GITHUB:(FOR COMMITS)
 TESTED ON: PYTHON 3.10
 
 
-![watchvideo]("C:\Users\harsh\Downloads\shirsath_dijkstra (1).mp4")
+![watchvideo]("C:\Users\harsh\Downloads\shirsath_dijkstra (1).mov")
 
 =======
->>>>>>> 219277287dbfea94efdbccfc10b18c2eb08b91a1
+

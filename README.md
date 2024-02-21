@@ -22,7 +22,7 @@ LINK TO GITHUB:(FOR COMMITS)
 TESTED ON: PYTHON 3.10
 
 
-![watchvideo]("C:\Users\harsh\Downloads\shirsath_dijkstra (1).mov")
+![watchvideo](https://youtu.be/ZUQB7yxelOg)
 
 =======
 

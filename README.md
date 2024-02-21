@@ -1,6 +1,6 @@
-<<<<<<< HEAD
+
 =======
-# Dijkstra_planning_ENPM661
+# Dijkstra_Algorithm
 >>>>>>> 219277287dbfea94efdbccfc10b18c2eb08b91a1
 ENPM_661 PLANNING
 PROJECT 2: DIJKSTRA ALGORITHM FOR POINT ROBOT
@@ -23,7 +23,7 @@ LINK TO GITHUB:(FOR COMMITS)
 TESTED ON: PYTHON 3.10
 
 
-<<<<<<< HEAD
+![watchvideo]("C:\Users\harsh\Downloads\shirsath_dijkstra (1).mp4")
 
 =======
 >>>>>>> 219277287dbfea94efdbccfc10b18c2eb08b91a1
